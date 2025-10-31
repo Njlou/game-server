@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Server</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .auth-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-selection {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .game-card {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .game-card h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .game-area {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
+        .game-controls {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 5px;
+            width: 200px;
+        }
+
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Game Server</h1>
+            <p>Chọn trò chơi để bắt đầu</p>
+        </div>
+
+        <!-- Authentication Section -->
+        <div class="auth-section" id="authSection">
+            <h3>Đăng nhập / Đăng ký</h3>
+            <div>
+                <input type="text" id="username" placeholder="Tên đăng nhập">
+                <input type="password" id="password" placeholder="Mật khẩu">
+                <button onclick="register()">Đăng ký</button>
+                <button onclick="login()">Đăng nhập</button>
+            </div>
+            <div id="authStatus"></div>
+        </div>
+
+        <!-- Game Selection -->
+        <div class="game-selection" id="gameSelection" style="display: none;">
+            <div class="game-card" onclick="selectGame('line98')">
+                <h3>🎯 Line 98</h3>
+                <p>Di chuyển bóng tạo hàng 5</p>
+            </div>
+            <div class="game-card" onclick="selectGame('caro')">
+                <h3>⭕ Caro X O</h3>
+                <p>Cờ caro 15x15</p>
+            </div>
+        </div>
+
+        <!-- Line98 Game -->
+        <div class="game-area" id="line98Game">
+            <div class="game-controls">
+                <h3>Line 98</h3>
+                <button onclick="joinQueue('line98')">Tìm đối thủ</button>
+                <button onclick="getHint()">Gợi ý</button>
+                <button onclick="backToMenu()">Quay lại</button>
+                <div id="line98Status" class="status"></div>
+            </div>
+            <canvas id="line98Canvas" width="450" height="450"
+                style="border: 1px solid #000; display: block; margin: 0 auto;"></canvas>
+        </div>
+
+        <!-- Caro Game -->
+        <div class="game-area" id="caroGame">
+            <div class="game-controls">
+                <h3>Caro X O</h3>
+                <button onclick="joinQueue('caro')">Tìm đối thủ</button>
+                <button onclick="backToMenu()">Quay lại</button>
+                <div id="caroStatus" class="status"></div>
+            </div>
+            <canvas id="caroCanvas" width="450" height="450"
+                style="border: 1px solid #000; display: block; margin: 0 auto;"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <script src="game-client.js"></script>
+</body>
+
+</html>
